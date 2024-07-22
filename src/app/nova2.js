@@ -1,7 +1,6 @@
 
 // DOBOT Nova2 Assets
 
-
 export const Nova2Assets = () => {
     return (
         <a-assets>
@@ -17,17 +16,18 @@ export const Nova2Assets = () => {
     )
 }
 
+
 export const DOBOT_Nova2 = (props) => {
     const { visible, rotate, joint_pos, edit_pos } = props
     return (
         <>
             <Nova2Assets />
-            <a-entity gltf-model="#NOVA2_BASE" position={edit_pos(joint_pos.base)} rotation="0 -90 0">
-                <a-entity gltf-model="#NOVA2_J1" position={edit_pos(joint_pos.j1)} rotation={`0 ${rotate.j1} 0`}>
-                    <a-entity gltf-model="#NOVA2_J2" position={edit_pos(joint_pos.j2)} rotation={`0 0 ${rotate.j2}`}>
-                        <a-entity gltf-model="#NOVA2_J3" position={edit_pos(joint_pos.j3)} rotation={`0 0 ${rotate.j3}`}>
+            <a-entity gltf-model="#NOVA2_BASE" position={edit_pos(joint_pos.base)} rotation="0 -90 0" model-opacity="opacity:0.6;">
+                <a-entity gltf-model="#NOVA2_J1" position={edit_pos(joint_pos.j1)} rotation={`0 ${rotate.j1} 0`} model-opacity="opacity:0.2;">
+                    <a-entity gltf-model="#NOVA2_J2" position={edit_pos(joint_pos.j2)} rotation={`0 0 ${rotate.j2}`} >
+                        <a-entity gltf-model="#NOVA2_J3" position={edit_pos(joint_pos.j3)} rotation={`0 0 ${rotate.j3}`} model-opacity="opacity:0.2;">
                             <a-entity gltf-model="#NOVA2_J4" position={edit_pos(joint_pos.j4)} rotation={`0 0 ${rotate.j4}`}>
-                                <a-entity gltf-model="#NOVA2_J5" position={edit_pos(joint_pos.j5)} rotation={`0 ${rotate.j5} 0`}>
+                                <a-entity gltf-model="#NOVA2_J5" position={edit_pos(joint_pos.j5)} rotation={`0 ${rotate.j5} 0`} model-opacity="opacity:0.2;">
                                     <a-entity gltf-model="#NOVA2_J6" position={edit_pos(joint_pos.j6)} rotation={`0 0 ${rotate.j6}`}>
                                     </a-entity>
                                 </a-entity>
