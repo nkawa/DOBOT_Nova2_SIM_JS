@@ -5,6 +5,7 @@ import { DOBOT_Nova2, Nova2_joints } from './nova2.js';
 import Controller from './controller.js'
 //import { AFRAME } from 'aframe';
 import { setNodeData } from './fabrik.js';
+import { Cursor3d, Cursor3dp } from './cursor3d.js';
 
 export default function Home() {
   const [rotate, set_rotate] = React.useState({ j1: 0, j2: 0, j3: 0, j4: 0, j5: 0, j6: 0 })
@@ -29,6 +30,7 @@ export default function Home() {
 
 
   const edit_pos = (posxyz) => `${posxyz.x} ${posxyz.y} ${posxyz.z}`
+  const edit_rot = (posxyz) => `${posxyz.x} ${posxyz.y} ${posxyz.z}`
 
   const joint_pos = Nova2_joints;
 
@@ -84,7 +86,7 @@ export default function Home() {
   const aboxprops = {
     nodes, box_scale, box_visible, edit_pos
   }
-  console.log("Node:", nodes)
+  //  console.log("Node:", nodes)
 
   const Abox = (props) => {
     const { nodes, box_scale, box_visible, edit_pos } = props
@@ -96,6 +98,39 @@ export default function Home() {
     }
   }
 
+  //  const { pos: njpos, euler: njrot, quaternion, mat } = Nova2_calc_j3(joint_pos);
+  //  console.log("njpos:", njpos, "Eular:", njrot, "Qua:", quaternion);
+  //  console.log("mat:", mat);
+
+
+  /*
+    const Nova2_getJoint2 = () => {
+      const j2 = document.getElementById("nj2");
+      if (j2) {
+        let mat = j2.object3D.matrixWorld;
+        let pos = new THREE.Vector3();
+        let quaternion = new THREE.Quaternion();
+        let scale = new THREE.Vector3()
+        mat.decompose(pos, quaternion, scale)
+        let euler = new THREE.Euler().setFromQuaternion(quaternion, "XYZ");
+        console.log("njpos:", pos, "Eular:", euler, "Qua:", quaternion);
+      }
+    }
+      */
+  //  Nova2_getJoint2()
+
+
+  const Cursors = () => {
+    if (!nodes || nodes.length < 1) {
+      return <a-entity></a-entity>
+    }
+    return <>
+      <Cursor3dp pos={nodes[0]} rot={{ x: 0, y: rotate.j1, z: 0 }} len="0.1" />
+      <Cursor3dp pos={nodes[1]} rot={wrist_rotate} len="0.1" />
+    </>
+  }
+
+
   return (
     <>
       <p>
@@ -103,12 +138,19 @@ export default function Home() {
       </p>
       <a-scene xr-mode-ui="enterAREnabled: true; XRMode: xr">
         <Abox {...aboxprops} />
-        <a-cone position={edit_pos(node1)} scale={box_scale} color="red" visible={box_visible} material="opacity:0.5; transparent: true;"></a-cone>
+        {
+          // <Abox {...aboxprops} />
+          //        <a-cone position={edit_pos(node1)} scale={box_scale} color="red" visible={box_visible} material="opacity:0.5; transparent: true;"></a-cone>
+          //              <Cursor3dp pos={nodes[2]} rot={wrist_rotate} len="0.1" />
+          //<Cursor3dp pos={nodes[3]} rot={wrist_rotate} len="0.1" />
+          //          
+
+        }
+        <Cursors></Cursors>
         <a-cone position={edit_pos(node2)} scale={box_scale} color="cyan" visible={box_visible} material="opacity:0.4; transparent: true;"></a-cone>
         <a-sphere position={edit_pos(target)} scale="0.02 0.02 0.02" color="yellow" visible={true}></a-sphere>
-
-        <a-plane position="0 -0.01 0" rotation="-90 0 0" width="1" height="1" color="#7BC8A4" shadow></a-plane>
         <DOBOT_Nova2 visible={true} {...robotProps} />
+        <a-plane position="0 -0.01 0" rotation="-90 0 0" width="1" height="1" color="#7BC8A4" shadow></a-plane>
         <a-entity id="rig" position={edit_pos(c_pos)} rotation={`${c_deg.x} ${c_deg.y} ${c_deg.z}`}>
           <a-camera id="camera" cursor="rayOrigin: mouse;" position="0 0 0"></a-camera>
         </a-entity>
