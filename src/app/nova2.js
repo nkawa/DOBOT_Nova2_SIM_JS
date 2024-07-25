@@ -77,14 +77,16 @@ export const Nova2_calc_j3 = (rotate) => {
 
     mat.multiply(j1rot);
     mat.multiply(j2rot);
-    mat.multiply(j2j3);
+    //    mat.multiply(j2j3);
 
     let pos = new THREE.Vector3();
     let quaternion = new THREE.Quaternion();
     let scale = new THREE.Vector3()
     mat.decompose(pos, quaternion, scale)
-    let euler = new THREE.Euler().setFromQuaternion(quaternion, "XYZ");
+    let euler = new THREE.Euler().setFromQuaternion(quaternion, "ZXY");
     let rot = { x: euler.x * 180 / Math.PI, y: euler.y * 180 / Math.PI, z: euler.z * 180 / Math.PI }
+    console.log("Quat", quaternion)
+    console.log("Euler3", euler)
     return { mat, pos, rot, quaternion };
 }
 
@@ -92,29 +94,56 @@ export const Nova2_calc_j3 = (rotate) => {
 export const Nova2_calc_j4 = (mat, rotate) => {
     const THREE = window.AFRAME.THREE;
     const j = Nova2_joints;
-    //    let mat = new THREE.Matrix4();
-    //    mat.compose(new THREE.Vector3(j.j2.x, j.j2.y, j.j2.z), new THREE.Quaternion(), new THREE.Vector3(1, 1, 1))
-    //    let j1rot = new THREE.Matrix4().makeRotationY(Math.PI * rotate.j1 / 180);
-    //    let j2j3 = new THREE.Matrix4().makeTranslation(j.j3.x, j.j3.y, j.j3.z);
-    //    let j2rot =new THREE.Matrix4().makeRotationAxis( new THREE.Vector3(0,0,1), joint_pos.j2)
-    //    let j2rot = new THREE.Matrix4().makeRotationZ(Math.PI * rotate.j2 / 180);
-
     let j3rot = new THREE.Matrix4().makeRotationZ(Math.PI * rotate.j3 / 180);
     let j3j4 = new THREE.Matrix4().makeTranslation(j.j4.x, j.j4.y, j.j4.z);
-    //    let j2rot =new THREE.Matrix4().makeRotationAxis( new THREE.Vector3(0,0,1), joint_pos.j2)
-    //    let j2rot = new THREE.Matrix4().makeRotationZ(Math.PI * rotate.j2 / 180);
-
-    //   mat.multiply(j1rot);
-    //   mat.multiply(j2rot);
-    //    mat.multiply(j2j3);
+    let j2j3 = new THREE.Matrix4().makeTranslation(j.j3.x, j.j3.y, j.j3.z);
+    mat.multiply(j2j3);
     mat.multiply(j3rot);
-    mat.multiply(j3j4);
+    //    mat.multiply(j3j4);
 
     let pos = new THREE.Vector3();
     let quaternion = new THREE.Quaternion();
     let scale = new THREE.Vector3()
     mat.decompose(pos, quaternion, scale)
-    let euler = new THREE.Euler().setFromQuaternion(quaternion, "XYZ");
+    let euler = new THREE.Euler().setFromQuaternion(quaternion, "ZXY");
+    let rot = { x: euler.x * 180 / Math.PI, y: euler.y * 180 / Math.PI, z: euler.z * 180 / Math.PI }
+    return { mat, pos, rot, quaternion };
+}
+
+export const Nova2_calc_j5 = (mat, rotate) => {
+    const THREE = window.AFRAME.THREE;
+    const j = Nova2_joints;
+    let j4rot = new THREE.Matrix4().makeRotationZ(Math.PI * rotate.j4 / 180);
+    let j4j5 = new THREE.Matrix4().makeTranslation(j.j5.x, j.j5.y, j.j5.z);
+    let j3j4 = new THREE.Matrix4().makeTranslation(j.j4.x, j.j4.y, j.j4.z);
+    mat.multiply(j3j4);
+    mat.multiply(j4rot);
+    //    mat.multiply(j4j5);
+
+    let pos = new THREE.Vector3();
+    let quaternion = new THREE.Quaternion();
+    let scale = new THREE.Vector3()
+    mat.decompose(pos, quaternion, scale)
+    let euler = new THREE.Euler().setFromQuaternion(quaternion, "ZXY");
+    let rot = { x: euler.x * 180 / Math.PI, y: euler.y * 180 / Math.PI, z: euler.z * 180 / Math.PI }
+    return { mat, pos, rot, quaternion };
+}
+
+export const Nova2_calc_j6 = (mat, rotate) => {
+    const THREE = window.AFRAME.THREE;
+    const j = Nova2_joints;
+    let j5rot = new THREE.Matrix4().makeRotationY(Math.PI * rotate.j5 / 180);
+    let j4j5 = new THREE.Matrix4().makeTranslation(j.j5.x, j.j5.y, j.j5.z);
+    //    let j5j6 = new THREE.Matrix4().makeTranslation(j.j6.x, j.j6.y, j.j6.z);
+    mat.multiply(j4j5);
+    mat.multiply(j5rot);
+    //    mat.multiply(j5j6);
+
+    let pos = new THREE.Vector3();
+    let quaternion = new THREE.Quaternion();
+    let scale = new THREE.Vector3()
+    mat.decompose(pos, quaternion, scale)
+    let euler = new THREE.Euler().setFromQuaternion(quaternion, "ZXY");
     let rot = { x: euler.x * 180 / Math.PI, y: euler.y * 180 / Math.PI, z: euler.z * 180 / Math.PI }
     return { mat, pos, rot, quaternion };
 }

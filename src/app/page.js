@@ -1,11 +1,14 @@
 "use client";
 
 import * as React from 'react';
-import { DOBOT_Nova2, Nova2_joints, Nova2_calc_j3, Nova2_calc_j4 } from './nova2.js';
+import { DOBOT_Nova2, Nova2_joints, Nova2_calc_j3, Nova2_calc_j4, Nova2_calc_j5, Nova2_calc_j6 } from './nova2.js';
 import Controller from './controller.js'
 //import { AFRAME } from 'aframe';
 import { setNodeData } from './fabrik.js';
-import { Cursor3d, Cursor3dp } from './cursor3d.js';
+import { Cursor3d, Cursor3dp, Cursor3dq } from './cursor3d.js';
+//import { AFRAME } from 'aframe';
+
+
 
 export default function Home() {
   const [rotate, set_rotate] = React.useState({ j1: 0, j2: 0, j3: 0, j4: 0, j5: 0, j6: 0 })
@@ -35,13 +38,27 @@ export default function Home() {
   const joint_pos = Nova2_joints;
 
 
-  React.useEffect(() => {
+  React.useEffect(async () => {
     const initAframe = async () => {
       console.log("Loading A-frame");
-      await import('aframe');
+      await require('aframe');
+      if (AFRAME) {
+        console.log("AFrame loaded");
+        if (AFRAME.components) {
+          console.log("Components exists");
+        } else {
+          console.log("No !Components exists");
+        }
+      } else {
+        console.log("No AFRAME");
+        // 再度実行すべし
+        setTimeout(initAframe, 100);
+        return;
+      }
       if ('model-opacity' in AFRAME.components) { // モデルを透明にするための仕組み
         console.log("Second register");
       } else {
+
         AFRAME.registerComponent("model-opacity", {
           schema: {
             opacity: { type: "number", default: 0.5 }
@@ -67,7 +84,7 @@ export default function Home() {
         });
       }
     }
-    initAframe();
+    await initAframe();
     const { nod, len } = setNodeData(joint_pos);
     set_nodes(nod);
     set_joint_length(len);
@@ -112,7 +129,7 @@ export default function Home() {
       let quaternion = new THREE.Quaternion();
       let scale = new THREE.Vector3()
       mat.decompose(pos, quaternion, scale)
-      let euler = new THREE.Euler().setFromQuaternion(quaternion, "XYZ");
+      let euler = new THREE.Euler().setFromQuaternion(quaternion, "ZXY");
       return {
         pos, rot:
           { x: euler.x * 180 / Math.PI, y: euler.y * 180 / Math.PI, z: euler.z * 180 / Math.PI }
@@ -137,17 +154,26 @@ export default function Home() {
     if (posj2) {
       const { pos: ppj3, rot: protj3, mat: mat3 } = Nova2_calc_j3(rotate);
       const { pos: ppj4, rot: protj4, mat: mat4 } = Nova2_calc_j4(mat3, rotate);
-
+      const { pos: ppj5, rot: protj5, mat: mat5 } = Nova2_calc_j5(mat4, rotate);
+      const { pos: ppj6, rot: protj6, mat: mat6, quaternion: qua6 } = Nova2_calc_j6(mat5, rotate);
+      console.log("protj3", protj3)
       return (<>
         <Cursor3dp pos={nodes[0]} rot={{ x: 0, y: rotate.j1, z: 0 }} len="0.15" opa="0.3" />
-        <Cursor3dp pos={posj2} rot={rotj2} len="0.1" opa="1" />
-        <Cursor3dp pos={ppj3} rot={protj3} len="0.15" opa="0.5" />
-        <Cursor3dp pos={posj3} rot={rotj3} len="0.1" opa="1" />
+        <Cursor3dp pos={ppj3} rot={protj3} len="0.15" opa="0.5quat6" />
         <Cursor3dp pos={ppj4} rot={protj4} len="0.15" opa="0.5" />
+        <Cursor3dp pos={ppj5} rot={protj5} len="0.15" opa="0.5" />
+        <Cursor3dp pos={ppj6} rot={protj6} len="0.15" opa="0.5" />
+        <Cursor3dp pos={posj2} rot={rotj2} len="0.1" opa="1" />
+        <Cursor3dp pos={posj3} rot={rotj3} len="0.1" opa="1" />
         <Cursor3dp pos={posj4} rot={rotj4} len="0.1" opa="1" />
+        <Cursor3dp pos={posj5} rot={rotj5} len="0.1" opa="1" />
+        <Cursor3dp pos={posj6} rot={rotj6} len="0.1" opa="1" />
         {
 
           /*
+        <Cursor3dq pos={ppj6} qua={qua6} len="0.20" opa="0.1" />
+        <Cursor3dp pos={posj2} rot={rotj2} len="0.1" opa="1" />
+        <Cursor3dp pos={posj3} rot={rotj3} len="0.1" opa="1" />
         <Cursor3dp pos={posj4} rot={rotj4} len="0.15" opa="0.5" />
         <Cursor3dp pos={posj5} rot={rotj5} len="0.1" opa="1" />
         <Cursor3dp pos={posj6} rot={rotj6} len="0.1" opa="1" />
