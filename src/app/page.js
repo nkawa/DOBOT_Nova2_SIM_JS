@@ -103,31 +103,48 @@ export default function Home() {
   //  console.log("mat:", mat);
 
 
-  /*
-    const Nova2_getJoint2 = () => {
-      const j2 = document.getElementById("nj2");
-      if (j2) {
-        let mat = j2.object3D.matrixWorld;
-        let pos = new THREE.Vector3();
-        let quaternion = new THREE.Quaternion();
-        let scale = new THREE.Vector3()
-        mat.decompose(pos, quaternion, scale)
-        let euler = new THREE.Euler().setFromQuaternion(quaternion, "XYZ");
-        console.log("njpos:", pos, "Eular:", euler, "Qua:", quaternion);
+  // ID からその、オブジェクトのワールド座標を取得する
+  const get_pos_euler = (id) => {
+    const obj = document.getElementById(id);
+    if (obj && obj.object3D) {
+      let mat = obj.object3D.matrixWorld;// 本来は前のフレームで取得すべき
+      let pos = new THREE.Vector3();
+      let quaternion = new THREE.Quaternion();
+      let scale = new THREE.Vector3()
+      mat.decompose(pos, quaternion, scale)
+      let euler = new THREE.Euler().setFromQuaternion(quaternion, "XYZ");
+      return {
+        pos, rot:
+          { x: (euler.x + Math.PI * 2) * 180 / Math.PI, y: euler.y * 180 / Math.PI, z: euler.z * 180 / Math.PI }
       }
+    } else {
+      return { pos: null, rot: null }
     }
-      */
-  //  Nova2_getJoint2()
+  }
 
 
   const Cursors = () => {
     if (!nodes || nodes.length < 1) {
       return <a-entity></a-entity>
     }
-    return <>
-      <Cursor3dp pos={nodes[0]} rot={{ x: 0, y: rotate.j1, z: 0 }} len="0.1" />
-      <Cursor3dp pos={nodes[1]} rot={wrist_rotate} len="0.1" />
-    </>
+
+    const { pos: posj2, rot: rotj2 } = get_pos_euler("nj2");
+    const { pos: posj3, rot: rotj3 } = get_pos_euler("nj3");
+    const { pos: posj4, rot: rotj4 } = get_pos_euler("nj4");
+    const { pos: posj5, rot: rotj5 } = get_pos_euler("nj5");
+    const { pos: posj6, rot: rotj6 } = get_pos_euler("nj6");
+    if (posj2) {
+      return (<>
+        <Cursor3dp pos={nodes[0]} rot={{ x: 0, y: joint_pos.j1, z: 0 }} len="0.1" />
+        <Cursor3dp pos={posj2} rot={rotj2} len="0.1" />
+
+        <Cursor3dp pos={posj3} rot={rotj3} len="0.1" />
+        <Cursor3dp pos={posj4} rot={rotj4} len="0.1" />
+        <Cursor3dp pos={posj5} rot={rotj5} len="0.1" />
+        <Cursor3dp pos={posj6} rot={rotj6} len="0.1" />
+      </>)
+    }
+    return <a-entity></a-entity>
   }
 
 
@@ -137,7 +154,6 @@ export default function Home() {
         DOBOT Nova2 Control
       </p>
       <a-scene xr-mode-ui="enterAREnabled: true; XRMode: xr">
-        <Abox {...aboxprops} />
         {
           // <Abox {...aboxprops} />
           //        <a-cone position={edit_pos(node1)} scale={box_scale} color="red" visible={box_visible} material="opacity:0.5; transparent: true;"></a-cone>
