@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from 'react';
-import { DOBOT_Nova2, Nova2_joints } from './nova2.js';
+import { DOBOT_Nova2, Nova2_joints, Nova2_calc_j3, Nova2_calc_j4 } from './nova2.js';
 import Controller from './controller.js'
 //import { AFRAME } from 'aframe';
 import { setNodeData } from './fabrik.js';
@@ -102,7 +102,6 @@ export default function Home() {
   //  console.log("njpos:", njpos, "Eular:", njrot, "Qua:", quaternion);
   //  console.log("mat:", mat);
 
-
   // ID からその、オブジェクトのワールド座標を取得する
   // まだ　角度は一部おかしい場合がある。原因不明。
   const get_pos_euler = (id) => {
@@ -124,25 +123,35 @@ export default function Home() {
   }
 
 
+
   const Cursors = () => {
     if (!nodes || nodes.length < 1) {
       return <a-entity></a-entity>
     }
-
     const { pos: posj2, rot: rotj2 } = get_pos_euler("nj2");
     const { pos: posj3, rot: rotj3 } = get_pos_euler("nj3");
     const { pos: posj4, rot: rotj4 } = get_pos_euler("nj4");
     const { pos: posj5, rot: rotj5 } = get_pos_euler("nj5");
     const { pos: posj6, rot: rotj6 } = get_pos_euler("nj6");
-    if (posj2) {
-      return (<>
-        <Cursor3dp pos={nodes[0]} rot={{ x: 0, y: joint_pos.j1, z: 0 }} len="0.1" />
-        <Cursor3dp pos={posj2} rot={rotj2} len="0.1" />
 
-        <Cursor3dp pos={posj3} rot={rotj3} len="0.1" />
-        <Cursor3dp pos={posj4} rot={rotj4} len="0.1" />
-        <Cursor3dp pos={posj5} rot={rotj5} len="0.1" />
-        <Cursor3dp pos={posj6} rot={rotj6} len="0.1" />
+    if (posj2) {
+      const { pos: ppj3, rot: protj3, mat: mat3 } = Nova2_calc_j3(rotate);
+      const { pos: ppj4, rot: protj4, mat: mat4 } = Nova2_calc_j4(mat3, rotate);
+
+      return (<>
+        <Cursor3dp pos={nodes[0]} rot={{ x: 0, y: rotate.j1, z: 0 }} len="0.15" opa="0.3" />
+        <Cursor3dp pos={posj2} rot={rotj2} len="0.1" opa="1" />
+        <Cursor3dp pos={ppj3} rot={protj3} len="0.15" opa="0.5" />
+        <Cursor3dp pos={posj3} rot={rotj3} len="0.1" opa="1" />
+        <Cursor3dp pos={ppj4} rot={protj4} len="0.15" opa="0.5" />
+        <Cursor3dp pos={posj4} rot={rotj4} len="0.1" opa="1" />
+        {
+
+          /*
+        <Cursor3dp pos={posj4} rot={rotj4} len="0.15" opa="0.5" />
+        <Cursor3dp pos={posj5} rot={rotj5} len="0.1" opa="1" />
+        <Cursor3dp pos={posj6} rot={rotj6} len="0.1" opa="1" />
+        */}
       </>)
     }
     return <a-entity></a-entity>
@@ -164,7 +173,7 @@ export default function Home() {
         <DOBOT_Nova2 visible={true} {...robotProps} />
         <a-plane position="0 -0.01 0" rotation="-90 0 0" width="1" height="1" color="#7BC8A4" shadow></a-plane>
         <a-entity id="rig" position={edit_pos(c_pos)} rotation={`${c_deg.x} ${c_deg.y} ${c_deg.z}`}>
-          <a-camera id="camera" cursor="rayOrigin: mouse;" position="0 0 0"></a-camera>
+          <a-camera id="camera" look-controls cursor="rayOrigin: entity;" position="0 0 0"></a-camera>
         </a-entity>
       </a-scene >
       <Controller {...controllerProps} />

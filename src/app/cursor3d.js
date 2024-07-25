@@ -22,11 +22,11 @@ export const Cursor3d = (props) => {
 
 
 export const Cursor3dp = (props) => {
-    const { pos, rot, len } = props;
+    const { pos, rot, len, opa } = props;
 
-    const line_x = `start: 0 0 0; end: ${len} 0 0; color: red;`
-    const line_y = `start: 0 0 0; end: 0 ${len} 0; color: green;`
-    const line_z = `start: 0 0 0; end: 0 0 ${len}; color: blue`
+    const line_x = `start: 0 0 0; end: ${len} 0 0; color: red; opacity: ${opa};`
+    const line_y = `start: 0 0 0; end: 0 ${len} 0; color: green; opacity: ${opa};`
+    const line_z = `start: 0 0 0; end: 0 0 ${len}; color: blue; opacity: ${opa};`
 
     return <a-entity
         line={line_x}

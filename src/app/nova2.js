@@ -59,32 +59,62 @@ export const Nova2_calc_j2 = (joint_pos) => {
     let j2 = new THREE.Matrix4().makeTranslation(Nova2_joints.j2.x, Nova2_joints.j2.y, Nova2_joints.j2.z);
 }
 
-export const Nova2_calc_j3 = (joint_pos) => {
-    let mat = new THREE.Matrix4()
-    let j1rot = new THREE.Matrix4().makeRotationY(Math.PI * joint_pos.j1 / 180);
-    let j2 = new THREE.Matrix4().makeTranslation(Nova2_joints.j2.x, Nova2_joints.j2.y, Nova2_joints.j2.z);
-    let j2j3 = new THREE.Matrix4().makeTranslation(Nova2_joints.j3.x, Nova2_joints.j3.y, Nova2_joints.j3.z);
-    //    let j2rot =new THREE.Matrix4().makeRotationAxis( new THREE.Vector3(0,0,1), joint_pos.j2)
-    let j2rot = new THREE.Matrix4().makeRotationZ(Math.PI * joint_pos.j2 / 180);
 
-    //    mat.multiplyMatrices(j1rot, j2, j2j3, j2rot);
-    mat.multiply(j2);
+*/
+
+export const Nova2_calc_j3 = (rotate) => {
+    if (!window.AFRAME) return { pos: null, rot: null };
+    if (!window.AFRAME.THREE) return { pos: null, rot: null };
+
+    const THREE = window.AFRAME.THREE;
+    const j = Nova2_joints;
+    let mat = new THREE.Matrix4()
+    mat.compose(new THREE.Vector3(j.j2.x, j.j2.y, j.j2.z), new THREE.Quaternion(), new THREE.Vector3(1, 1, 1))
+    let j1rot = new THREE.Matrix4().makeRotationY(Math.PI * rotate.j1 / 180);
+    let j2j3 = new THREE.Matrix4().makeTranslation(j.j3.x, j.j3.y, j.j3.z);
+    //    let j2rot =new THREE.Matrix4().makeRotationAxis( new THREE.Vector3(0,0,1), joint_pos.j2)
+    let j2rot = new THREE.Matrix4().makeRotationZ(Math.PI * rotate.j2 / 180);
+
     mat.multiply(j1rot);
+    mat.multiply(j2rot);
     mat.multiply(j2j3);
+
     let pos = new THREE.Vector3();
     let quaternion = new THREE.Quaternion();
     let scale = new THREE.Vector3()
     mat.decompose(pos, quaternion, scale)
     let euler = new THREE.Euler().setFromQuaternion(quaternion, "XYZ");
-    return { mat, pos, euler, quaternion };
+    let rot = { x: euler.x * 180 / Math.PI, y: euler.y * 180 / Math.PI, z: euler.z * 180 / Math.PI }
+    return { mat, pos, rot, quaternion };
 }
 
 
-export const Nova2_getJoint2 = () => {
-    if (!AFRAME.scenes.length)
-        return;
-    let scene = AFRAME.scenes[0];
+export const Nova2_calc_j4 = (mat, rotate) => {
+    const THREE = window.AFRAME.THREE;
+    const j = Nova2_joints;
+    //    let mat = new THREE.Matrix4();
+    //    mat.compose(new THREE.Vector3(j.j2.x, j.j2.y, j.j2.z), new THREE.Quaternion(), new THREE.Vector3(1, 1, 1))
+    //    let j1rot = new THREE.Matrix4().makeRotationY(Math.PI * rotate.j1 / 180);
+    //    let j2j3 = new THREE.Matrix4().makeTranslation(j.j3.x, j.j3.y, j.j3.z);
+    //    let j2rot =new THREE.Matrix4().makeRotationAxis( new THREE.Vector3(0,0,1), joint_pos.j2)
+    //    let j2rot = new THREE.Matrix4().makeRotationZ(Math.PI * rotate.j2 / 180);
 
+    let j3rot = new THREE.Matrix4().makeRotationZ(Math.PI * rotate.j3 / 180);
+    let j3j4 = new THREE.Matrix4().makeTranslation(j.j4.x, j.j4.y, j.j4.z);
+    //    let j2rot =new THREE.Matrix4().makeRotationAxis( new THREE.Vector3(0,0,1), joint_pos.j2)
+    //    let j2rot = new THREE.Matrix4().makeRotationZ(Math.PI * rotate.j2 / 180);
+
+    //   mat.multiply(j1rot);
+    //   mat.multiply(j2rot);
+    //    mat.multiply(j2j3);
+    mat.multiply(j3rot);
+    mat.multiply(j3j4);
+
+    let pos = new THREE.Vector3();
+    let quaternion = new THREE.Quaternion();
+    let scale = new THREE.Vector3()
+    mat.decompose(pos, quaternion, scale)
+    let euler = new THREE.Euler().setFromQuaternion(quaternion, "XYZ");
+    let rot = { x: euler.x * 180 / Math.PI, y: euler.y * 180 / Math.PI, z: euler.z * 180 / Math.PI }
+    return { mat, pos, rot, quaternion };
 }
-    */
-
