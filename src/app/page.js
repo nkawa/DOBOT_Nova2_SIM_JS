@@ -104,6 +104,7 @@ export default function Home() {
 
 
   // ID からその、オブジェクトのワールド座標を取得する
+  // まだ　角度は一部おかしい場合がある。原因不明。
   const get_pos_euler = (id) => {
     const obj = document.getElementById(id);
     if (obj && obj.object3D) {
@@ -115,7 +116,7 @@ export default function Home() {
       let euler = new THREE.Euler().setFromQuaternion(quaternion, "XYZ");
       return {
         pos, rot:
-          { x: (euler.x + Math.PI * 2) * 180 / Math.PI, y: euler.y * 180 / Math.PI, z: euler.z * 180 / Math.PI }
+          { x: euler.x * 180 / Math.PI, y: euler.y * 180 / Math.PI, z: euler.z * 180 / Math.PI }
       }
     } else {
       return { pos: null, rot: null }
@@ -157,13 +158,8 @@ export default function Home() {
         {
           // <Abox {...aboxprops} />
           //        <a-cone position={edit_pos(node1)} scale={box_scale} color="red" visible={box_visible} material="opacity:0.5; transparent: true;"></a-cone>
-          //              <Cursor3dp pos={nodes[2]} rot={wrist_rotate} len="0.1" />
-          //<Cursor3dp pos={nodes[3]} rot={wrist_rotate} len="0.1" />
-          //          
-
         }
         <Cursors></Cursors>
-        <a-cone position={edit_pos(node2)} scale={box_scale} color="cyan" visible={box_visible} material="opacity:0.4; transparent: true;"></a-cone>
         <a-sphere position={edit_pos(target)} scale="0.02 0.02 0.02" color="yellow" visible={true}></a-sphere>
         <DOBOT_Nova2 visible={true} {...robotProps} />
         <a-plane position="0 -0.01 0" rotation="-90 0 0" width="1" height="1" color="#7BC8A4" shadow></a-plane>
